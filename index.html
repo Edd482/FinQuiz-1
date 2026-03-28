@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#7c3aed">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FinQuiz">
+<meta name="description" content="O quiz definitivo de finanças e mentalidade rica para Moçambique!">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>FinQuiz — Mestre das Finanças</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; font-size: 16px; }
+body {
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  background: #0a0015;
+  color: #fff;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+/* ============================================================
+   CSS VARIABLES
+   ============================================================ */
+:root {
+  --purple: #7c3aed;
+  --purple-light: #a855f7;
+  --purple-dark: #4c1d95;
+  --gold: #f59e0b;
+  --gold-light: #fcd34d;
+  --green: #10b981;
+  --red: #ef4444;
+  --blue: #3b82f6;
+  --pink: #ec4899;
+  --bg: #0a0015;
+  --bg2: #110025;
+  --card: rgba(124,58,237,0.12);
+  --border: rgba(168,85,247,0.3);
+  --text-muted: rgba(255,255,255,0.6);
+  --neon-purple: 0 0 20px rgba(168,85,247,0.8), 0 0 40px rgba(168,85,247,0.4);
+  --neon-gold: 0 0 20px rgba(245,158,11,0.8), 0 0 40px rgba(245,158,11,0.4);
+  --neon-green: 0 0 20px rgba(16,185,129,0.8), 0 0 40px rgba(16,185,129,0.4);
+  --neon-red: 0 0 20px rgba(239,68,68,0.8), 0 0 40px rgba(239,68,68,0.4);
+}
+
+/* ============================================================
+   ANIMATED BACKGROUND
+   ============================================================ */
+.bg-animated {
+  position: fixed; top:0; left:0; width:100%; height:100%; z-index:0; overflow:hidden;
+}
+.bg-animated::before {
+  content:'';
+  position:absolute; top:-50%; left:-50%; width:200%; height:200%;
+  background: radial-gradient(ellipse at 30% 20%, rgba(124,58,237,0.25) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(236,72,153,0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at 50% 50%, rgba(59,130,246,0.1) 0%, transparent 60%);
+  animation: bgRotate 20s linear infinite;
+}
+@keyframes bgRotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+.stars { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+.star {
+  position:absolute; border-radius:50%; background:#fff; animation: twinkle 3s ease-in-out infinite;
+}
+@keyframes twinkle { 0%,100%{opacity:0.2;transform:scale(1)} 50%{opacity:1;transform:scale(1.5)} }
+
+/* ============================================================
+   SCREENS
+   ============================================================ */
+.screen {
+  position:relative; z-index:1; min-height:100vh;
+  display:none; flex-direction:column; align-items:center;
+  padding:20px 16px 40px;
+}
+.screen.active { display:flex; }
+
+/* ============================================================
+   SCREEN: SPLASH
+   ============================================================ */
+#splash {
+  justify-content:center; gap:32px;
+  background: radial-gradient(circle at center, rgba(124,58,237,0.3) 0%, transparent 70%);
+}
+.splash-logo {
+  text-align:center; animation: splashIn 0.8s ease-out;
+}
+@keyframes splashIn { from{opacity:0;transform:scale(0.5) rotate(-10deg)} to{opacity:1;transform:scale(1) rotate(0deg)} }
+.logo-icon {
+  font-size:80px; display:block; margin-bottom:8px;
+  animation: floatIcon 3s ease-in-out infinite;
+  filter: drop-shadow(0 0 30px rgba(245,158,11,0.8));
+}
+@keyframes floatIcon { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+.logo-title {
+  font-family:'Orbitron',monospace; font-size:42px; font-weight:900; letter-spacing:4px;
+  background: linear-gradient(135deg, #f59e0b, #fcd34d, #a855f7, #ec4899);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  text-shadow:none;
+  animation: shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.3)} }
+.logo-sub {
+  font-size:13px; color:var(--text-muted); letter-spacing:3px; text-transform:uppercase; margin-top:4px;
+}
+.splash-tagline {
+  text-align:center; font-size:16px; color:rgba(255,255,255,0.85); line-height:1.6;
+  background: var(--card); border:1px solid var(--border); border-radius:16px; padding:20px 24px;
+  backdrop-filter:blur(10px);
+}
+.splash-tagline strong { color:var(--gold-light); }
+.splash-features {
+  display:flex; flex-direction:column; gap:12px; width:100%; max-width:360px;
+}
+.feature-chip {
+  display:flex; align-items:center; gap:12px; padding:12px 16px;
+  background:rgba(124,58,237,0.2); border:1px solid rgba(168,85,247,0.25); border-radius:12px;
+  font-size:14px; animation: slideIn 0.5s ease-out both;
+}
+.feature-chip:nth-child(1){animation-delay:0.2s}
+.feature-chip:nth-child(2){animation-delay:0.35s}
+.feature-chip:nth-child(3){animation-delay:0.5s}
+@keyframes slideIn { from{opacity:0;transform:translateX(-30px)} to{opacity:1;transform:translateX(0)} }
+.feature-chip span:first-child { font-size:24px; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  border:none; cursor:pointer; font-family:'Poppins',sans-serif; font-weight:700;
+  border-radius:50px; transition:all 0.2s ease; position:relative; overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+.btn::after {
+  content:''; position:absolute; top:50%; left:50%; width:0; height:0;
+  background:rgba(255,255,255,0.3); border-radius:50%; transform:translate(-50%,-50%);
+  transition:width 0.4s ease, height 0.4s ease, opacity 0.4s ease; opacity:0;
+}
+.btn:active::after { width:200px; height:200px; opacity:0; }
+.btn-primary {
+  background:linear-gradient(135deg, #7c3aed, #a855f7, #ec4899);
+  color:#fff; padding:16px 48px; font-size:18px; letter-spacing:1px;
+  box-shadow: 0 4px 30px rgba(124,58,237,0.6), var(--neon-purple);
+  width:100%; max-width:320px;
+}
+.btn-primary:active { transform:scale(0.96); }
+.btn-gold {
+  background:linear-gradient(135deg, #d97706, #f59e0b, #fcd34d);
+  color:#1a0a00; padding:14px 40px; font-size:16px;
+  box-shadow: 0 4px 25px rgba(245,158,11,0.5), var(--neon-gold);
+}
+.btn-gold:active { transform:scale(0.96); }
+.btn-outline {
+  background:transparent; color:#fff; border:2px solid var(--border);
+  padding:12px 32px; font-size:15px; backdrop-filter:blur(8px);
+}
+.btn-outline:active { background:rgba(255,255,255,0.1); }
+.btn-danger {
+  background:linear-gradient(135deg, #dc2626, #ef4444);
+  color:#fff; padding:12px 32px; font-size:15px;
+  box-shadow: 0 4px 20px rgba(239,68,68,0.4);
+}
+
+/* ============================================================
+   SCREEN: MENU PRINCIPAL
+   ============================================================ */
+#menu { gap:24px; padding-top:40px; }
+.menu-header { text-align:center; width:100%; }
+.player-card {
+  display:flex; align-items:center; gap:16px; padding:16px 20px;
+  background:var(--card); border:1px solid var(--border); border-radius:20px;
+  width:100%; max-width:380px; backdrop-filter:blur(10px);
+}
+.player-avatar { font-size:40px; filter:drop-shadow(0 0 10px rgba(245,158,11,0.6)); }
+.player-info { flex:1; }
+.player-name { font-size:18px; font-weight:700; }
+.player-level { font-size:12px; color:var(--gold-light); font-weight:600; letter-spacing:1px; }
+.xp-bar-wrap { margin-top:6px; background:rgba(255,255,255,0.1); border-radius:50px; height:6px; }
+.xp-bar { height:100%; border-radius:50px; background:linear-gradient(90deg,#7c3aed,#fcd34d); transition:width 0.8s ease; }
+.menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; width:100%; max-width:380px; }
+.menu-card {
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  padding:24px 12px; border-radius:20px; cursor:pointer; border:1px solid var(--border);
+  backdrop-filter:blur(10px); transition:all 0.25s ease; text-align:center;
+  position:relative; overflow:hidden;
+}
+.menu-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; bottom:0; opacity:0;
+  transition:opacity 0.3s;
+}
+.menu-card:active { transform:scale(0.95); }
+.menu-card:active::before { opacity:1; }
+.menu-card.play { background:linear-gradient(135deg,rgba(124,58,237,0.4),rgba(168,85,247,0.2)); }
+.menu-card.play::before { background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(168,85,247,0.1)); }
+.menu-card.rank { background:linear-gradient(135deg,rgba(245,158,11,0.3),rgba(252,211,77,0.15)); }
+.menu-card.profile { background:linear-gradient(135deg,rgba(59,130,246,0.3),rgba(99,102,241,0.15)); }
+.menu-card.motivate { background:linear-gradient(135deg,rgba(16,185,129,0.3),rgba(52,211,153,0.15)); }
+.menu-card.speed { background:linear-gradient(135deg,rgba(236,72,153,0.3),rgba(244,114,182,0.15)); }
+.menu-card.share { background:linear-gradient(135deg,rgba(239,68,68,0.3),rgba(248,113,113,0.15)); }
+.menu-icon { font-size:36px; }
+.menu-label { font-size:13px; font-weight:700; letter-spacing:0.5px; }
+.menu-badge {
+  position:absolute; top:10px; right:10px; background:var(--red); color:#fff;
+  font-size:10px; font-weight:700; padding:2px 8px; border-radius:50px;
+}
+.daily-streak {
+  display:flex; align-items:center; gap:10px; padding:12px 20px;
+  background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(252,211,77,0.1));
+  border:1px solid rgba(245,158,11,0.3); border-radius:14px; width:100%; max-width:380px;
+  font-size:14px;
+}
+
+/* ============================================================
+   SCREEN: SELECT LEVEL
+   ============================================================ */
+#select-level { gap:24px; padding-top:30px; }
+.screen-title {
+  font-family:'Orbitron',monospace; font-size:22px; font-weight:700; text-align:center;
+  background:linear-gradient(135deg,#fcd34d,#a855f7);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+}
+.level-cards { display:flex; flex-direction:column; gap:16px; width:100%; max-width:380px; }
+.level-card {
+  display:flex; align-items:center; gap:20px; padding:20px 24px; border-radius:20px;
+  cursor:pointer; border:2px solid; transition:all 0.25s ease; position:relative; overflow:hidden;
+}
+.level-card::after {
+  content:''; position:absolute; right:-20px; top:50%; transform:translateY(-50%);
+  font-size:60px; opacity:0.08;
+}
+.level-card.easy { border-color:rgba(16,185,129,0.5); background:rgba(16,185,129,0.15); }
+.level-card.easy::after { content:'🎯'; }
+.level-card.medium { border-color:rgba(245,158,11,0.5); background:rgba(245,158,11,0.15); }
+.level-card.medium::after { content:'⚡'; }
+.level-card.hard { border-color:rgba(239,68,68,0.5); background:rgba(239,68,68,0.15); }
+.level-card.hard::after { content:'💀'; }
+.level-card:active { transform:scale(0.97); }
+.level-icon { font-size:44px; }
+.level-info { flex:1; }
+.level-name { font-size:18px; font-weight:800; letter-spacing:1px; }
+.level-desc { font-size:12px; color:var(--text-muted); margin-top:2px; }
+.level-xp { font-size:20px; font-weight:800; }
+.level-card.easy .level-name { color:#34d399; }
+.level-card.easy .level-xp { color:#34d399; }
+.level-card.medium .level-name { color:#fcd34d; }
+.level-card.medium .level-xp { color:#fcd34d; }
+.level-card.hard .level-name { color:#f87171; }
+.level-card.hard .level-xp { color:#f87171; }
+.category-section { width:100%; max-width:380px; }
+.category-label { font-size:13px; color:var(--text-muted); margin-bottom:10px; font-weight:600; text-transform:uppercase; letter-spacing:1px; }
+.category-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.cat-chip {
+  padding:8px 16px; border-radius:50px; font-size:13px; font-weight:600; cursor:pointer;
+  border:2px solid; transition:all 0.2s;
+}
+.cat-chip.active { background:var(--purple); border-color:var(--purple-light); color:#fff; }
+.cat-chip:not(.active) { border-color:var(--border); color:var(--text-muted); background:transparent; }
+.back-btn {
+  display:flex; align-items:center; gap:8px; color:var(--text-muted); cursor:pointer;
+  font-size:14px; font-weight:600; align-self:flex-start; padding:8px 0;
+  transition:color 0.2s;
+}
+.back-btn:active { color:#fff; }
+
+/* ============================================================
+   SCREEN: QUIZ
+   ============================================================ */
+#quiz { gap:16px; padding-top:20px; }
+.quiz-header { display:flex; align-items:center; gap:12px; width:100%; max-width:420px; }
+.quiz-progress-wrap { flex:1; }
+.quiz-progress-label { display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); margin-bottom:6px; font-weight:600; }
+.quiz-progress-bar { height:8px; background:rgba(255,255,255,0.1); border-radius:50px; overflow:hidden; }
+.quiz-progress-fill {
+  height:100%; border-radius:50px;
+  background:linear-gradient(90deg,#7c3aed,#a855f7,#ec4899);
+  transition:width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: var(--neon-purple);
+}
+.xp-counter {
+  display:flex; align-items:center; gap:4px; background:rgba(245,158,11,0.2);
+  border:1px solid rgba(245,158,11,0.4); border-radius:50px; padding:6px 12px;
+  font-size:13px; font-weight:700; color:var(--gold-light); white-space:nowrap;
+}
+/* Timer */
+.timer-wrap { width:100%; max-width:420px; }
+.timer-bar { height:6px; background:rgba(255,255,255,0.1); border-radius:50px; overflow:hidden; }
+.timer-fill {
+  height:100%; border-radius:50px; width:100%;
+  background:linear-gradient(90deg,#10b981,#3b82f6,#f59e0b,#ef4444);
+  transition:width 1s linear, background 1s linear;
+}
+.timer-fill.urgent { animation:urgentPulse 0.5s ease-in-out infinite; }
+@keyframes urgentPulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+.timer-label { text-align:right; font-size:11px; color:var(--text-muted); margin-top:4px; font-weight:600; }
+/* Question */
+.question-card {
+  width:100%; max-width:420px; background:var(--card); border:1px solid var(--border);
+  border-radius:24px; padding:24px 20px; backdrop-filter:blur(10px); text-align:center;
+  animation:questionIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes questionIn { from{opacity:0;transform:scale(0.9) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.question-category-badge {
+  display:inline-block; padding:4px 14px; border-radius:50px; font-size:11px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase; margin-bottom:16px;
+}
+.q-text { font-size:18px; font-weight:700; line-height:1.5; }
+/* Options */
+.options-grid { display:flex; flex-direction:column; gap:10px; width:100%; max-width:420px; }
+.option-btn {
+  display:flex; align-items:center; gap:14px; padding:17px 20px; border-radius:16px;
+  background:rgba(255,255,255,0.12); border:2px solid rgba(168,85,247,0.45);
+  cursor:pointer; transition:all 0.2s ease; text-align:left; width:100%;
+  animation:optionIn 0.4s ease both; color:#ffffff;
+}
+.option-btn:nth-child(1){animation-delay:0.05s}
+.option-btn:nth-child(2){animation-delay:0.1s}
+.option-btn:nth-child(3){animation-delay:0.15s}
+.option-btn:nth-child(4){animation-delay:0.2s}
+@keyframes optionIn { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
+.option-btn:not(:disabled):active { transform:scale(0.97); }
+.option-letter {
+  width:36px; height:36px; border-radius:50%; background:rgba(168,85,247,0.5); border:2px solid rgba(168,85,247,0.8);
+  display:flex; align-items:center; justify-content:center; font-weight:900; font-size:14px;
+  flex-shrink:0; transition:all 0.2s; color:#fff;
+}
+.option-text { font-size:16px; font-weight:700; flex:1; color:#ffffff; line-height:1.4; }
+.option-btn.correct { background:rgba(16,185,129,0.3); border-color:var(--green); box-shadow:var(--neon-green); }
+.option-btn.correct .option-letter { background:var(--green); border-color:var(--green); color:#fff; }
+.option-btn.wrong { background:rgba(239,68,68,0.3); border-color:var(--red); box-shadow:var(--neon-red); }
+.option-btn.wrong .option-letter { background:var(--red); border-color:var(--red); color:#fff; }
+.option-btn:disabled { cursor:default; }
+.option-btn:not(:disabled):hover { border-color:var(--purple-light); background:rgba(124,58,237,0.3); }
+/* Feedback */
+.feedback-toast {
+  position:fixed; top:20px; left:50%; transform:translateX(-50%);
+  padding:14px 28px; border-radius:50px; font-size:16px; font-weight:800;
+  z-index:100; pointer-events:none; white-space:nowrap;
+  animation: toastAnim 2s ease-out forwards;
+}
+@keyframes toastAnim {
+  0%{opacity:0;transform:translateX(-50%) translateY(-20px) scale(0.8)}
+  15%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+  75%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+  100%{opacity:0;transform:translateX(-50%) translateY(-10px) scale(0.9)}
+}
+.feedback-toast.correct { background:var(--green); color:#fff; box-shadow:var(--neon-green); }
+.feedback-toast.wrong { background:var(--red); color:#fff; box-shadow:var(--neon-red); }
+.feedback-toast.timeout { background:var(--gold); color:#1a0a00; box-shadow:var(--neon-gold); }
+/* XP popup */
+.xp-popup {
+  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  font-family:'Orbitron',monospace; font-size:28px; font-weight:900;
+  color:var(--gold-light); text-shadow:var(--neon-gold); pointer-events:none; z-index:100;
+  animation:xpPop 1.2s ease-out forwards;
+}
+@keyframes xpPop {
+  0%{opacity:0;transform:translate(-50%,-50%) scale(0.5)}
+  20%{opacity:1;transform:translate(-50%,-60%) scale(1.2)}
+  60%{opacity:1;transform:translate(-50%,-70%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-90%) scale(0.8)}
+}
+
+/* ============================================================
+   SCREEN: RESULT
+   ============================================================ */
+#result { gap:20px; justify-content:center; padding-top:30px; }
+.result-trophy {
+  font-size:80px; animation:trophyBounce 1s cubic-bezier(0.34,1.56,0.64,1);
+  filter:drop-shadow(0 0 30px rgba(245,158,11,0.8));
+}
+@keyframes trophyBounce { from{transform:scale(0) rotate(-30deg)} to{transform:scale(1) rotate(0)} }
+.result-title { font-family:'Orbitron',monospace; font-size:26px; font-weight:900; text-align:center; }
+.result-subtitle { color:var(--text-muted); font-size:15px; text-align:center; }
+.result-stats {
+  display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; max-width:380px;
+}
+.result-stat {
+  text-align:center; padding:16px; background:var(--card); border:1px solid var(--border); border-radius:16px;
+}
+.result-stat-value { font-size:28px; font-weight:800; font-family:'Orbitron',monospace; }
+.result-stat-label { font-size:12px; color:var(--text-muted); margin-top:4px; font-weight:600; }
+.result-actions { display:flex; flex-direction:column; gap:10px; width:100%; max-width:320px; align-items:center; }
+.stars-display { display:flex; gap:8px; font-size:36px; }
+
+/* ============================================================
+   SCREEN: RANKING
+   ============================================================ */
+#ranking { gap:20px; padding-top:30px; }
+.ranking-list { width:100%; max-width:400px; display:flex; flex-direction:column; gap:10px; }
+.rank-item {
+  display:flex; align-items:center; gap:14px; padding:14px 18px;
+  background:var(--card); border:1px solid var(--border); border-radius:16px;
+  animation:slideIn 0.4s ease both;
+}
+.rank-pos { font-family:'Orbitron',monospace; font-size:16px; font-weight:900; width:36px; text-align:center; }
+.rank-pos.gold { color:var(--gold-light); text-shadow:var(--neon-gold); }
+.rank-pos.silver { color:#94a3b8; }
+.rank-pos.bronze { color:#b45309; }
+.rank-avatar { font-size:28px; }
+.rank-info { flex:1; }
+.rank-name { font-size:15px; font-weight:700; }
+.rank-details { font-size:12px; color:var(--text-muted); margin-top:2px; }
+.rank-xp { font-family:'Orbitron',monospace; font-size:16px; font-weight:700; color:var(--gold-light); }
+.rank-item.current-player { border-color:var(--purple-light); background:rgba(124,58,237,0.2); }
+.empty-ranking { text-align:center; padding:40px 20px; color:var(--text-muted); font-size:15px; }
+.empty-ranking .icon { font-size:60px; display:block; margin-bottom:12px; }
+
+/* ============================================================
+   SCREEN: PROFILE
+   ============================================================ */
+#profile { gap:20px; padding-top:30px; }
+.profile-avatar-big {
+  font-size:80px; animation:floatIcon 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 20px rgba(245,158,11,0.6));
+}
+.profile-name-display { font-size:24px; font-weight:800; text-align:center; }
+.profile-level-badge {
+  padding:6px 20px; border-radius:50px; font-size:13px; font-weight:700; letter-spacing:1px;
+  background:linear-gradient(135deg,#7c3aed,#a855f7); box-shadow:var(--neon-purple);
+}
+.profile-xp-section { width:100%; max-width:380px; }
+.xp-big { font-family:'Orbitron',monospace; font-size:36px; font-weight:900; color:var(--gold-light); text-align:center; }
+.xp-label { color:var(--text-muted); font-size:13px; text-align:center; margin-top:4px; }
+.xp-bar-big { margin-top:12px; background:rgba(255,255,255,0.1); border-radius:50px; height:12px; overflow:hidden; }
+.xp-bar-big-fill { height:100%; border-radius:50px; background:linear-gradient(90deg,#7c3aed,#fcd34d); box-shadow:var(--neon-gold); transition:width 0.8s ease; }
+.xp-next { display:flex; justify-content:space-between; font-size:12px; color:var(--text-muted); margin-top:6px; }
+.avatars-section { width:100%; max-width:380px; }
+.avatars-title { font-size:14px; font-weight:700; margin-bottom:12px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; }
+.avatars-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
+.avatar-item {
+  display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 6px;
+  border-radius:12px; border:2px solid; transition:all 0.2s; cursor:pointer;
+}
+.avatar-item.unlocked { border-color:var(--gold); background:rgba(245,158,11,0.1); }
+.avatar-item.locked { border-color:rgba(255,255,255,0.1); background:rgba(255,255,255,0.03); opacity:0.5; filter:grayscale(1); cursor:default; }
+.avatar-item.selected { border-color:var(--purple-light); background:rgba(124,58,237,0.2); box-shadow:var(--neon-purple); }
+.avatar-emoji { font-size:26px; }
+.avatar-req { font-size:9px; color:var(--text-muted); text-align:center; }
+.stats-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; width:100%; max-width:380px; }
+.stat-box { text-align:center; padding:14px 8px; background:var(--card); border:1px solid var(--border); border-radius:14px; }
+.stat-box-val { font-size:22px; font-weight:800; font-family:'Orbitron',monospace; color:var(--purple-light); }
+.stat-box-label { font-size:11px; color:var(--text-muted); margin-top:4px; }
+.name-input-wrap { width:100%; max-width:380px; }
+.name-input-wrap label { font-size:13px; color:var(--text-muted); font-weight:600; display:block; margin-bottom:8px; }
+.name-input {
+  width:100%; background:rgba(255,255,255,0.05); border:2px solid var(--border); border-radius:12px;
+  padding:12px 16px; color:#fff; font-size:16px; font-family:'Poppins',sans-serif; outline:none;
+  transition:border-color 0.2s;
+}
+.name-input:focus { border-color:var(--purple-light); }
+
+/* ============================================================
+   SCREEN: MOTIVAÇÃO
+   ============================================================ */
+#motivation { gap:24px; justify-content:center; padding-top:30px; }
+.motivation-icon { font-size:70px; animation:floatIcon 3s ease-in-out infinite; }
+.motivation-card {
+  width:100%; max-width:380px; background:linear-gradient(135deg,rgba(124,58,237,0.3),rgba(236,72,153,0.2));
+  border:1px solid rgba(168,85,247,0.4); border-radius:24px; padding:28px 24px; text-align:center;
+  backdrop-filter:blur(10px); position:relative; overflow:hidden;
+}
+.motivation-card::before {
+  content:'"'; position:absolute; top:-10px; left:16px; font-size:120px; color:rgba(168,85,247,0.15);
+  font-family:Georgia,serif; line-height:1;
+}
+.motivation-quote { font-size:20px; font-weight:700; line-height:1.6; position:relative; z-index:1; }
+.motivation-author { margin-top:16px; font-size:14px; color:var(--gold-light); font-weight:600; }
+.motivation-number { margin-top:8px; font-size:12px; color:var(--text-muted); }
+.motivation-nav { display:flex; gap:12px; align-items:center; }
+.nav-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,0.2); transition:all 0.3s; cursor:pointer; }
+.nav-dot.active { background:var(--purple-light); box-shadow:var(--neon-purple); width:24px; border-radius:4px; }
+
+/* ============================================================
+   SCREEN: SPEED MODE
+   ============================================================ */
+#speed-mode { gap:16px; padding-top:20px; }
+.speed-header { text-align:center; }
+.speed-timer-big {
+  font-family:'Orbitron',monospace; font-size:64px; font-weight:900;
+  color:var(--gold-light); text-shadow:var(--neon-gold);
+  animation:timerPulse 1s ease-in-out infinite;
+}
+@keyframes timerPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+.speed-score-display { font-size:20px; font-weight:700; color:var(--text-muted); }
+.speed-score-display span { color:#fff; font-weight:800; font-size:28px; }
+.speed-q-card {
+  width:100%; max-width:420px; background:var(--card); border:2px solid var(--border);
+  border-radius:24px; padding:24px 20px; text-align:center; backdrop-filter:blur(10px);
+}
+.speed-q-text { font-size:20px; font-weight:700; line-height:1.5; }
+.speed-options { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; max-width:420px; }
+.speed-opt {
+  padding:18px 12px; border-radius:16px; background:rgba(255,255,255,0.07);
+  border:2px solid rgba(255,255,255,0.12); cursor:pointer; font-size:15px; font-weight:700;
+  transition:all 0.15s; text-align:center;
+}
+.speed-opt:active { transform:scale(0.95); }
+.speed-opt.correct { background:rgba(16,185,129,0.3); border-color:var(--green); }
+.speed-opt.wrong { background:rgba(239,68,68,0.3); border-color:var(--red); }
+.speed-combo {
+  font-family:'Orbitron',monospace; font-size:20px; font-weight:900;
+  color:var(--pink); text-align:center;
+}
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+.modal-overlay {
+  position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7);
+  z-index:200; display:none; align-items:center; justify-content:center; padding:20px;
+  backdrop-filter:blur(8px);
+}
+.modal-overlay.open { display:flex; }
+.modal-box {
+  background:linear-gradient(135deg,#1a0035,#0d001f); border:1px solid var(--border);
+  border-radius:24px; padding:32px 28px; max-width:360px; width:100%; text-align:center;
+  animation:modalIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes modalIn { from{opacity:0;transform:scale(0.8)} to{opacity:1;transform:scale(1)} }
+.modal-icon { font-size:56px; margin-bottom:12px; }
+.modal-title { font-family:'Orbitron',monospace; font-size:20px; font-weight:700; margin-bottom:8px; }
+.modal-text { color:var(--text-muted); font-size:14px; line-height:1.6; margin-bottom:20px; }
+.modal-actions { display:flex; flex-direction:column; gap:10px; }
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+.text-gold { color:var(--gold-light); }
+.text-purple { color:var(--purple-light); }
+.text-green { color:#34d399; }
+.text-red { color:#f87171; }
+.text-muted { color:var(--text-muted); }
+.fw-800 { font-weight:800; }
+.mt-8 { margin-top:8px; }
+.divider { width:100%; max-width:380px; height:1px; background:var(--border); }
+.badge-new {
+  display:inline-block; padding:2px 10px; border-radius:50px; background:var(--pink);
+  font-size:10px; font-weight:700; color:#fff; letter-spacing:1px; vertical-align:middle; margin-left:6px;
+}
+/* Loading */
+.loading-dots { display:flex; gap:6px; align-items:center; }
+.dot { width:8px; height:8px; border-radius:50%; background:var(--purple-light); animation:dotBounce 1.2s ease-in-out infinite; }
+.dot:nth-child(2){animation-delay:0.2s}
+.dot:nth-child(3){animation-delay:0.4s}
+@keyframes dotBounce { 0%,80%,100%{transform:scale(0.6);opacity:0.5} 40%{transform:scale(1);opacity:1} }
+/* Install banner */
+.install-banner {
+  position:fixed; bottom:0; left:0; right:0; z-index:150;
+  background:linear-gradient(135deg,#7c3aed,#4c1d95); padding:12px 20px;
+  display:none; align-items:center; gap:12px; border-top:1px solid rgba(168,85,247,0.4);
+}
+.install-banner.visible { display:flex; }
+.install-text { flex:1; font-size:13px; font-weight:600; }
+.install-close { font-size:20px; cursor:pointer; opacity:0.6; padding:4px; }
+</style>
+</head>
+<body>
+
+<!-- ANIMATED BACKGROUND -->
+<div class="bg-animated"></div>
+<div class="stars" id="starsContainer"></div>
+
+<!-- ============================================================
+     SCREEN: SPLASH
+     ============================================================ -->
+<div class="screen active" id="splash">
+  <div class="splash-logo">
+    <span class="logo-icon">🧠</span>
+    <div class="logo-title">FINQUIZ</div>
+    <div class="logo-sub">Mestre das Finanças</div>
+  </div>
+  <div class="splash-tagline">
+    Treina o teu cérebro financeiro.<br>
+    <strong>Aprende enquanto jogas!</strong> 🇲🇿
+  </div>
+  <div class="splash-features">
+    <div class="feature-chip"><span>💰</span><span>+300 perguntas de Finanças & Mentalidade</span></div>
+    <div class="feature-chip"><span>🏆</span><span>Sistema de XP, Níveis e Avatares</span></div>
+    <div class="feature-chip"><span>⚡</span><span>Modo Contra-Relógio Épico</span></div>
+  </div>
+  <button class="btn btn-primary" onclick="goToMenu()">🎮 COMEÇAR A JOGAR</button>
+  <div style="font-size:11px;color:rgba(255,255,255,0.3);text-align:center;margin-top:4px;">
+    por Edd Inguane · Inguan AI Work · © 2025
+  </div>
+</div>
+
+<!-- ============================================================
+     SCREEN: MENU PRINCIPAL
+     ============================================================ -->
+<div class="screen" id="menu">
+  <div class="menu-header">
+    <div style="font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:var(--gold-light);letter-spacing:2px;margin-bottom:16px;">⚡ MENU PRINCIPAL</div>
+  </div>
+  <div class="player-card">
+    <div class="player-avatar" id="menuAvatar">🤓</div>
+    <div class="player-info">
+      <div class="player-name" id="menuPlayerName">Jogador</div>
+      <div class="player-level" id="menuPlayerLevel">⭐ APRENDIZ</div>
+      <div class="xp-bar-wrap"><div class="xp-bar" id="menuXpBar" style="width:0%"></div></div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-family:'Orbitron',monospace;font-size:18px;font-weight:900;color:var(--gold-light)" id="menuXpVal">0</div>
+      <div style="font-size:11px;color:var(--text-muted)">XP</div>
+    </div>
+  </div>
+  <div class="daily-streak">
+    <span style="font-size:24px">🔥</span>
+    <div>
+      <div style="font-weight:700;font-size:14px">Sequência de <span id="streakDays">1</span> dia(s)!</div>
+      <div style="font-size:12px;color:var(--text-muted)">Continua a jogar todos os dias</div>
+    </div>
+  </div>
+  <div class="menu-grid">
+    <div class="menu-card play" onclick="showScreen('select-level')">
+      <div class="menu-icon">🎯</div>
+      <div class="menu-label">JOGAR QUIZ</div>
+    </div>
+    <div class="menu-card speed" onclick="startSpeedMode()">
+      <div class="menu-icon">⚡</div>
+      <div class="menu-label">CONTRA-RELÓGIO</div>
+      <div class="menu-badge">HOT</div>
+    </div>
+    <div class="menu-card rank" onclick="showScreen('ranking')">
+      <div class="menu-icon">🏆</div>
+      <div class="menu-label">RANKING</div>
+    </div>
+    <div class="menu-card profile" onclick="showProfileScreen()">
+      <div class="menu-icon">👤</div>
+      <div class="menu-label">MEU PERFIL</div>
+    </div>
+    <div class="menu-card motivate" onclick="showScreen('motivation');loadMotivation()">
+      <div class="menu-icon">💡</div>
+      <div class="menu-label">MOTIVAÇÃO</div>
+    </div>
+    <div class="menu-card share" onclick="shareApp()">
+      <div class="menu-icon">📤</div>
+      <div class="menu-label">PARTILHAR</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SCREEN: SELECT LEVEL
+     ============================================================ -->
+<div class="screen" id="select-level">
+  <div class="back-btn" onclick="showScreen('menu')">← Voltar</div>
+  <div class="screen-title">⚔️ ESCOLHE O NÍVEL</div>
+  <div class="level-cards">
+    <div class="level-card easy" onclick="startQuiz('easy')">
+      <div class="level-icon">🟢</div>
+      <div class="level-info">
+        <div class="level-name">FÁCIL</div>
+        <div class="level-desc">Conceitos básicos · 20 perguntas · 30s cada</div>
+      </div>
+      <div class="level-xp">+10 XP</div>
+    </div>
+    <div class="level-card medium" onclick="startQuiz('medium')">
+      <div class="level-icon">🟡</div>
+      <div class="level-info">
+        <div class="level-name">MÉDIO</div>
+        <div class="level-desc">Investimentos · 20 perguntas · 20s cada</div>
+      </div>
+      <div class="level-xp">+20 XP</div>
+    </div>
+    <div class="level-card hard" onclick="startQuiz('hard')">
+      <div class="level-icon">🔴</div>
+      <div class="level-info">
+        <div class="level-name">DIFÍCIL</div>
+        <div class="level-desc">Mentalidade Rica · 20 perguntas · 15s cada</div>
+      </div>
+      <div class="level-xp">+35 XP</div>
+    </div>
+  </div>
+  <div class="category-section">
+    <div class="category-label">Categoria</div>
+    <div class="category-chips">
+      <div class="cat-chip active" onclick="selectCategory(this,'all')">Todas</div>
+      <div class="cat-chip" onclick="selectCategory(this,'financas')">💰 Finanças</div>
+      <div class="cat-chip" onclick="selectCategory(this,'mentalidade')">🧠 Mentalidade</div>
+      <div class="cat-chip" onclick="selectCategory(this,'poupanca')">🏦 Poupança</div>
+      <div class="cat-chip" onclick="selectCategory(this,'investimento')">📈 Investimento</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SCREEN: QUIZ
+     ============================================================ -->
+<div class="screen" id="quiz">
+  <div class="quiz-header">
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-label">
+        <span id="qProgress">Pergunta 1 / 20</span>
+        <span id="qLevel" style="color:var(--purple-light)">FÁCIL</span>
+      </div>
+      <div class="quiz-progress-bar">
+        <div class="quiz-progress-fill" id="qProgressFill" style="width:5%"></div>
+      </div>
+    </div>
+    <div class="xp-counter">⚡ <span id="quizXp">0</span> XP</div>
+  </div>
+  <div class="timer-wrap">
+    <div class="timer-bar">
+      <div class="timer-fill" id="timerFill"></div>
+    </div>
+    <div class="timer-label" id="timerLabel">15s</div>
+  </div>
+  <div class="question-card">
+    <div class="question-category-badge" id="qCatBadge" style="background:rgba(124,58,237,0.3);color:var(--purple-light);border:1px solid rgba(168,85,247,0.4)">FINANÇAS</div>
+    <div class="q-text" id="qText">Carregando...</div>
+  </div>
+  <div class="options-grid" id="optionsGrid"></div>
+  <button class="btn btn-outline" id="quitQuizBtn" onclick="confirmQuit()" style="margin-top:8px;font-size:13px;padding:10px 24px">Abandonar Quiz</button>
+</div>
+
+<!-- ============================================================
+     SCREEN: RESULT
+     ============================================================ -->
+<div class="screen" id="result">
+  <div class="result-trophy" id="resultTrophy">🏆</div>
+  <div class="result-title" id="resultTitle">FANTÁSTICO!</div>
+  <div class="result-subtitle" id="resultSubtitle">Quiz completado com sucesso</div>
+  <div class="stars-display" id="resultStars"></div>
+  <div class="result-stats">
+    <div class="result-stat">
+      <div class="result-stat-value text-green" id="resCorrect">0</div>
+      <div class="result-stat-label">✅ Corretas</div>
+    </div>
+    <div class="result-stat">
+      <div class="result-stat-value text-red" id="resWrong">0</div>
+      <div class="result-stat-label">❌ Erradas</div>
+    </div>
+    <div class="result-stat">
+      <div class="result-stat-value text-gold" id="resXp">0</div>
+      <div class="result-stat-label">⚡ XP Ganho</div>
+    </div>
+    <div class="result-stat">
+      <div class="result-stat-value text-purple" id="resAccuracy">0%</div>
+      <div class="result-stat-label">🎯 Precisão</div>
+    </div>
+  </div>
+  <div id="levelUpBanner" style="display:none;width:100%;max-width:380px;text-align:center;padding:16px;background:linear-gradient(135deg,rgba(245,158,11,0.3),rgba(252,211,77,0.1));border:2px solid var(--gold);border-radius:16px;">
+    <div style="font-size:28px">🎉</div>
+    <div style="font-weight:800;font-size:18px;color:var(--gold-light)" id="levelUpText">Nível Desbloqueado!</div>
+  </div>
+  <div class="result-actions">
+    <button class="btn btn-primary" onclick="startQuiz(currentLevel)">🔄 Jogar Novamente</button>
+    <button class="btn btn-gold" onclick="shareResult()">📤 Partilhar Resultado</button>
+    <button class="btn btn-outline" onclick="showScreen('menu')">🏠 Menu Principal</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     SCREEN: RANKING
+     ============================================================ -->
+<div class="screen" id="ranking">
+  <div class="back-btn" onclick="showScreen('menu')">← Voltar</div>
+  <div class="screen-title">🏆 RANKING LOCAL</div>
+  <div style="font-size:13px;color:var(--text-muted);text-align:center">Os melhores jogadores deste dispositivo</div>
+  <div class="ranking-list" id="rankingList">
+    <div class="empty-ranking"><span class="icon">🏆</span>Ainda não há jogadores no ranking.<br>Completa um quiz para aparecer aqui!</div>
+  </div>
+  <button class="btn btn-outline" onclick="clearRankingConfirm()" style="font-size:13px;padding:10px 24px">🗑️ Limpar Ranking</button>
+</div>
+
+<!-- ============================================================
+     SCREEN: PROFILE
+     ============================================================ -->
+<div class="screen" id="profile">
+  <div class="back-btn" onclick="showScreen('menu')">← Voltar</div>
+  <div class="profile-avatar-big" id="profileAvatarBig">🤓</div>
+  <div class="profile-name-display" id="profileNameDisplay">Jogador</div>
+  <div class="profile-level-badge" id="profileLevelBadge">⭐ APRENDIZ</div>
+  <div class="profile-xp-section">
+    <div class="xp-big" id="profileXpBig">0</div>
+    <div class="xp-label">XP Total</div>
+    <div class="xp-bar-big"><div class="xp-bar-big-fill" id="profileXpFill" style="width:0%"></div></div>
+    <div class="xp-next"><span id="xpMin">0 XP</span><span id="xpNextLevel">Próximo: 200 XP</span></div>
+  </div>
+  <div class="stats-grid">
+    <div class="stat-box"><div class="stat-box-val" id="statQuizzes">0</div><div class="stat-box-label">Quizzes</div></div>
+    <div class="stat-box"><div class="stat-box-val" id="statCorrect">0</div><div class="stat-box-label">Corretas</div></div>
+    <div class="stat-box"><div class="stat-box-val" id="statAccuracy">0%</div><div class="stat-box-label">Precisão</div></div>
+  </div>
+  <div class="avatars-section">
+    <div class="avatars-title">🎭 Avatares</div>
+    <div class="avatars-grid" id="avatarsGrid"></div>
+  </div>
+  <div class="name-input-wrap">
+    <label>✏️ Alterar Nome</label>
+    <input type="text" class="name-input" id="nameInput" placeholder="O teu nome de jogador" maxlength="20">
+    <button class="btn btn-primary" style="margin-top:10px;padding:12px 32px;font-size:15px" onclick="saveName()">💾 Guardar Nome</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     SCREEN: MOTIVAÇÃO
+     ============================================================ -->
+<div class="screen" id="motivation">
+  <div class="back-btn" onclick="showScreen('menu')">← Voltar</div>
+  <div class="motivation-icon">💡</div>
+  <div style="font-family:'Orbitron',monospace;font-size:18px;font-weight:700;text-align:center;color:var(--gold-light)">MOTIVAÇÃO DIÁRIA</div>
+  <div class="motivation-card">
+    <div class="motivation-quote" id="motivQuote">Carregando...</div>
+    <div class="motivation-author" id="motivAuthor">— Carregando</div>
+    <div class="motivation-number" id="motivNum">1 / 30</div>
+  </div>
+  <div class="motivation-nav">
+    <button class="btn btn-outline" style="padding:10px 20px;font-size:22px" onclick="prevMotiv()">←</button>
+    <div style="display:flex;gap:6px" id="motivDots"></div>
+    <button class="btn btn-outline" style="padding:10px 20px;font-size:22px" onclick="nextMotiv()">→</button>
+  </div>
+  <button class="btn btn-gold" onclick="shareMotivation()">📤 Partilhar Frase</button>
+</div>
+
+<!-- ============================================================
+     SCREEN: SPEED MODE
+     ============================================================ -->
+<div class="screen" id="speed-mode">
+  <div class="speed-header">
+    <div style="font-family:'Orbitron',monospace;font-size:14px;color:var(--pink);letter-spacing:2px;margin-bottom:8px">⚡ MODO CONTRA-RELÓGIO</div>
+    <div class="speed-timer-big" id="speedTimerBig">60</div>
+    <div class="speed-score-display">Pontos: <span id="speedScore">0</span></div>
+    <div class="speed-combo" id="speedCombo" style="min-height:28px"></div>
+  </div>
+  <div class="speed-q-card">
+    <div class="speed-q-text" id="speedQText">Prepara-te...</div>
+  </div>
+  <div class="speed-options" id="speedOptions"></div>
+  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:8px">
+    <div style="font-size:13px;color:var(--text-muted)">✅ <span id="speedCorrect">0</span> corretas</div>
+    <div style="font-size:13px;color:var(--text-muted)">❌ <span id="speedWrong">0</span> erradas</div>
+  </div>
+  <button class="btn btn-danger" onclick="endSpeedMode(true)" style="margin-top:8px;padding:10px 24px;font-size:13px">Parar</button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-icon" id="modalIcon">❓</div>
+    <div class="modal-title" id="modalTitle">Título</div>
+    <div class="modal-text" id="modalText">Texto</div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div class="install-banner" id="installBanner">
+  <span style="font-size:24px">📲</span>
+  <div class="install-text">Instala o FinQuiz no teu telemóvel para jogar offline!</div>
+  <button class="btn btn-gold" style="padding:8px 16px;font-size:13px" onclick="installApp()">Instalar</button>
+  <span class="install-close" onclick="dismissInstall()">✕</span>
+</div>
+
+<script>
+// ============================================================
+// QUESTIONS DATABASE — 300+ questions
+// ============================================================
+const ALL_QUESTIONS = {
+  easy: [
+    // FINANÇAS BÁSICAS
+    {q:"O que é um orçamento pessoal?",a:0,opts:["Um plano de controlo das receitas e despesas","Um empréstimo bancário","Um tipo de investimento","Um imposto do governo"],cat:"financas"},
+    {q:"O que significa poupar dinheiro?",a:1,opts:["Gastar tudo o que ganas","Guardar parte do dinheiro para o futuro","Pedir dinheiro emprestado","Investir na bolsa"],cat:"poupanca"},
+    {q:"O que é o salário mínimo em Moçambique?",a:2,opts:["O salário máximo pago","O salário médio nacional","O valor mínimo legal que um trabalhador pode receber","O salário pago apenas aos funcionários públicos"],cat:"financas"},
+    {q:"Qual destas é uma despesa fixa?",a:0,opts:["Renda da casa","Comida num restaurante","Roupa nova","Viagem de férias"],cat:"financas"},
+    {q:"O que é o M-Pesa?",a:1,opts:["Um banco tradicional","Um serviço de transferência de dinheiro via telemóvel","Um tipo de investimento","Uma criptomoeda"],cat:"financas"},
+    {q:"O que é uma conta poupança?",a:2,opts:["Uma conta para pagar dívidas","Uma conta para gastos diários","Uma conta bancária para guardar dinheiro com juros","Uma conta empresarial"],cat:"poupanca"},
+    {q:"Quanto deves poupar do teu salário, segundo especialistas?",a:1,opts:["Nada, gasta tudo","Pelo menos 10% a 20%","Exactamente 50%","Apenas 1%"],cat:"poupanca"},
+    {q:"O que são despesas variáveis?",a:3,opts:["Despesas que nunca mudam","Salários fixos","Impostos mensais","Gastos que variam mês a mês como lazer e comida"],cat:"financas"},
+    {q:"O que significa 'endividamento'?",a:0,opts:["Ter mais dívidas do que consegues pagar","Ter muito dinheiro poupado","Investir correctamente","Ganhar juros no banco"],cat:"financas"},
+    {q:"O que é inflação?",a:2,opts:["A subida dos salários","A descida dos preços","O aumento geral dos preços ao longo do tempo","O crescimento do PIB"],cat:"financas"},
+    {q:"Qual é a melhor forma de começar a poupar?",a:1,opts:["Esperar ter muito dinheiro","Poupar primeiro antes de gastar","Gastar primeiro e poupar o resto","Só poupar quando houver emergências"],cat:"poupanca"},
+    {q:"O que é um banco?",a:0,opts:["Uma instituição financeira que guarda e empresta dinheiro","Um local para comprar acções","Uma empresa de seguros","Uma cooperativa agrícola"],cat:"financas"},
+    {q:"O que é juros?",a:3,opts:["Uma penalização fiscal","O preço do produto","O salário de um empregado","O custo de usar o dinheiro de outra pessoa"],cat:"financas"},
+    {q:"Qual destes é um activo?",a:2,opts:["Uma dívida de cartão de crédito","Um empréstimo bancário","Uma casa que te gera renda","As mensalidades do carro"],cat:"investimento"},
+    {q:"O que é um passivo financeiro?",a:1,opts:["Algo que te gera dinheiro","Uma dívida ou obrigação financeira","Um investimento rentável","Uma conta poupança"],cat:"financas"},
+    {q:"Regra 50/30/20: O '20' refere-se a quê?",a:0,opts:["Poupança e investimentos","Lazer e entretenimento","Necessidades básicas","Impostos"],cat:"poupanca"},
+    {q:"O que significa 'liquidez' num activo?",a:2,opts:["A rentabilidade do investimento","O risco do investimento","A facilidade de converter em dinheiro","O valor total do activo"],cat:"investimento"},
+    {q:"Qual é o objetivo de um fundo de emergência?",a:3,opts:["Investir em acções","Pagar impostos","Financiar férias","Cobrir gastos inesperados sem ir a dívidas"],cat:"poupanca"},
+    {q:"O que é e-Mola em Moçambique?",a:1,opts:["Uma moeda digital","Serviço de pagamentos móveis da Movitel","Um banco digital","Um empréstimo rápido"],cat:"financas"},
+    {q:"Qual destas afirmações sobre poupar é verdadeira?",a:0,opts:["Pequenas quantias poupadas regularmente crescem ao longo do tempo","Só vale a pena poupar grandes quantias","Poupar não compensa com a inflação alta","Só os ricos conseguem poupar"],cat:"poupanca"},
+    // MENTALIDADE BÁSICA
+    {q:"O que significa ter mentalidade de crescimento?",a:1,opts:["Acreditar que as tuas capacidades são fixas","Acreditar que podes desenvolver habilidades com esforço","Evitar desafios para não falhar","Nunca pedir ajuda"],cat:"mentalidade"},
+    {q:"O que dizem os ricos sobre o dinheiro, segundo Robert Kiyosaki?",a:2,opts:["O dinheiro é a raiz de todos os males","Os ricos não precisam de trabalhar","O dinheiro trabalha para os ricos, não o contrário","Trabalha mais para ganhar mais"],cat:"mentalidade"},
+    {q:"O que é a 'mentalidade de escassez'?",a:0,opts:["Acreditar que nunca há recursos suficientes","Investir com sabedoria","Partilhar recursos com os outros","Criar múltiplas fontes de renda"],cat:"mentalidade"},
+    {q:"Qual é o primeiro passo para sair da pobreza financeira?",a:3,opts:["Pedir dinheiro emprestado","Trabalhar mais horas","Jogar à lotaria","Mudar a mentalidade sobre o dinheiro"],cat:"mentalidade"},
+    {q:"O que faz um rico diferente de um pobre, segundo os princípios de finanças pessoais?",a:1,opts:["Os ricos nascem em famílias ricas","Os ricos investem e criam activos; os pobres acumulam passivos","Os ricos trabalham mais horas","Os ricos têm mais sorte"],cat:"mentalidade"},
+    {q:"O que significa 'inteligência financeira'?",a:2,opts:["Ter um QI alto","Ser bom a matemática","Saber gerir, investir e multiplicar o dinheiro","Estudar economia na universidade"],cat:"mentalidade"},
+    {q:"Segundo os princípios de finanças, qual é o 'pior' hábito financeiro?",a:0,opts:["Gastar mais do que se ganha","Poupar 10% do salário","Investir em negócios","Criar um fundo de emergência"],cat:"mentalidade"},
+    {q:"O que é a 'renda passiva'?",a:3,opts:["O salário mensal do emprego","A pensão do governo","O rendimento de trabalho extra","Dinheiro que ganhas sem trabalhar activamente"],cat:"investimento"},
+    {q:"Qual destes exemplos é de renda passiva?",a:1,opts:["Trabalhar horas extra","Renda de um apartamento alugado","Fazer biscatos ao fim de semana","Receber salário mensal"],cat:"investimento"},
+    {q:"O que significa 'liberdade financeira'?",a:2,opts:["Ter muito dinheiro no banco","Não pagar impostos","Ter rendimentos suficientes para viver sem depender de emprego","Receber uma herança"],cat:"mentalidade"},
+  ],
+  medium: [
+    // INVESTIMENTOS
+    {q:"O que são juros compostos?",a:0,opts:["Juros que crescem sobre os juros anteriores","Juros pagos uma única vez","Taxas bancárias fixas","Impostos sobre investimentos"],cat:"investimento"},
+    {q:"Qual é a diferença entre acções e obrigações?",a:2,opts:["São a mesma coisa","As obrigações dão mais lucro sempre","As acções representam propriedade; as obrigações são empréstimos","As acções são mais seguras"],cat:"investimento"},
+    {q:"O que é diversificação de investimentos?",a:1,opts:["Colocar todo o dinheiro num único investimento","Distribuir o dinheiro por vários tipos de investimento","Investir apenas em ouro","Retirar dinheiro frequentemente"],cat:"investimento"},
+    {q:"O que significa ROI?",a:3,opts:["Registo de Operações Internas","Rendimento de Operações de Investimento","Retorno de Obrigações Internacionais","Retorno sobre o Investimento (Return on Investment)"],cat:"investimento"},
+    {q:"Qual é o risco de investir tudo num único activo?",a:0,opts:["Perder tudo se esse activo desvalorizar","Ganhar mais rápido","Pagar menos impostos","Ter mais liquidez"],cat:"investimento"},
+    {q:"O que é a bolsa de valores?",a:2,opts:["Um mercado de produtos agrícolas","Um banco de investimento","Um mercado onde se compram e vendem acções de empresas","Um fundo do governo"],cat:"investimento"},
+    {q:"Quanto tempo leva para dobrar dinheiro com juros de 10% ao ano (Regra dos 72)?",a:1,opts:["10 anos","7,2 anos","15 anos","5 anos"],cat:"investimento"},
+    {q:"O que é um fundo de investimento?",a:3,opts:["Uma conta poupança normal","Um empréstimo bancário","Um seguro de vida","Um veículo onde vários investidores juntam dinheiro para investir"],cat:"investimento"},
+    {q:"O que é inflação e como afecta as poupanças?",a:0,opts:["Reduz o poder de compra do dinheiro poupado","Aumenta o valor das poupanças automaticamente","Não afecta as poupanças bancárias","É positiva para quem poupa"],cat:"financas"},
+    {q:"Qual a melhor estratégia para investir a longo prazo?",a:2,opts:["Comprar e vender todos os dias","Esperar pelo momento perfeito","Investir regularmente independentemente das condições do mercado","Só investir quando o mercado está em alta"],cat:"investimento"},
+    {q:"O que é um imóvel como investimento?",a:1,opts:["Um passivo que sempre perde valor","Um activo que pode gerar renda e valorizar","Um investimento apenas para ricos","Um investimento sem risco"],cat:"investimento"},
+    {q:"O que são dividendos?",a:3,opts:["Taxas pagas ao banco","Juros de empréstimos","Penalizações fiscais","Parte dos lucros de uma empresa distribuídos aos accionistas"],cat:"investimento"},
+    {q:"O que é o 'mercado de capitais'?",a:0,opts:["Mercado de valores mobiliários de longo prazo","Mercado de câmbio de moedas","Mercado de produtos básicos","Mercado de crédito rápido"],cat:"investimento"},
+    {q:"Qual destes investimentos tem geralmente maior risco E maior potencial de retorno?",a:2,opts:["Depósito a prazo bancário","Obrigações do Estado","Acções de empresas emergentes","Poupança na conta corrente"],cat:"investimento"},
+    {q:"O que é 'capital de giro' num negócio?",a:1,opts:["O lucro anual da empresa","Dinheiro disponível para operações do dia-a-dia","O valor total dos activos","O investimento inicial do negócio"],cat:"financas"},
+    // EMPREENDEDORISMO
+    {q:"O que é um modelo de negócio?",a:3,opts:["Um plano de marketing","Um relatório financeiro","Um organograma","A forma como uma empresa gera e entrega valor e receita"],cat:"mentalidade"},
+    {q:"O que diferencia um empreendedor de um trabalhador comum?",a:0,opts:["O empreendedor cria sistemas que trabalham por ele","O empreendedor trabalha mais horas","O empreendedor nunca tem riscos","O empreendedor não precisa de educação"],cat:"mentalidade"},
+    {q:"O que é o 'ponto de equilíbrio' num negócio?",a:2,opts:["O momento de máximo lucro","O início do negócio","O momento em que receitas cobrem exactamente os custos","O fim do ano fiscal"],cat:"financas"},
+    {q:"Qual das seguintes é uma fonte de financiamento para negócios?",a:1,opts:["Despesas operacionais","Microcrédito","Salários pagos","Impostos"],cat:"financas"},
+    {q:"O que é a 'proposta de valor' de um negócio?",a:3,opts:["O preço do produto","O custo de produção","O lucro esperado","A razão pela qual clientes escolhem o teu produto/serviço"],cat:"mentalidade"},
+    {q:"O que é marketing digital?",a:0,opts:["Promoção de produtos/serviços através de meios digitais","Venda de equipamentos de tecnologia","Design de websites","Reparação de computadores"],cat:"mentalidade"},
+    {q:"O que são custos fixos de um negócio?",a:2,opts:["Custos que variam com a produção","Custos imprevistos","Custos que não mudam independentemente do volume de vendas","Custos de publicidade"],cat:"financas"},
+    {q:"O que é uma startup?",a:1,opts:["Uma empresa multinacional","Uma empresa jovem e inovadora em fase de crescimento rápido","Uma empresa do governo","Uma empresa familiar tradicional"],cat:"mentalidade"},
+    {q:"O que é 'fluxo de caixa'?",a:3,opts:["O lucro anual","O capital inicial","O valor dos activos","O movimento de entradas e saídas de dinheiro num negócio"],cat:"financas"},
+    {q:"Qual é o maior erro de novos empreendedores?",a:0,opts:["Não estudar o mercado antes de lançar o negócio","Trabalhar muito","Ter muita ambição","Poupar dinheiro antes de investir"],cat:"mentalidade"},
+  ],
+  hard: [
+    // MENTALIDADE RICA — AVANÇADO
+    {q:"Segundo Robert Kiyosaki, qual é a definição de activo?",a:2,opts:["Qualquer coisa que possuis","O valor total do teu patrimônio","Algo que coloca dinheiro no teu bolso","Algo que compras com crédito"],cat:"mentalidade"},
+    {q:"O que é a 'corrida dos ratos' segundo 'Pai Rico, Pai Pobre'?",a:1,opts:["Uma competição empresarial","O ciclo vicioso de trabalhar para pagar contas sem progredir financeiramente","Uma estratégia de investimento","Um método de poupança"],cat:"mentalidade"},
+    {q:"Qual dos quadrantes do CASHFLOW de Kiyosaki gera mais riqueza?",a:3,opts:["E (Empregado)","A (Autónomo)","D (Dono de negócio pequeno)","I (Investidor)"],cat:"mentalidade"},
+    {q:"O que é 'alavancagem financeira'?",a:0,opts:["Usar capital alheio para amplificar retornos dos seus investimentos","Pedir dinheiro emprestado para consumo","Diversificar em muitos investimentos","Reduzir despesas ao mínimo"],cat:"investimento"},
+    {q:"O que Warren Buffett diz sobre investir?",a:2,opts:["Compra quando está caro e vende quando está barato","Diversifica sempre por centenas de acções","Investir em negócios que entendes e manter a longo prazo","Segue as tendências do mercado"],cat:"investimento"},
+    {q:"O que é o 'efeito de juros compostos' ao longo de 30 anos?",a:1,opts:["Os juros mantêm-se lineares","O crescimento é exponencial, podendo multiplicar o capital muitas vezes","Os juros diminuem com o tempo","O efeito é mínimo em períodos longos"],cat:"investimento"},
+    {q:"Qual a diferença entre 'riqueza' e 'renda alta'?",a:3,opts:["São a mesma coisa","Riqueza é ter muitos bens","Renda alta garante sempre riqueza","Riqueza é medida em tempo de sobrevivência sem trabalhar; renda alta pode coexistir com pobreza"],cat:"mentalidade"},
+    {q:"O que é o princípio de Pareto (80/20) aplicado a finanças?",a:0,opts:["80% dos resultados vêm de 20% das acções/investimentos","Devemos gastar 80% e poupar 20%","Investir 80% em acções e 20% em ouro","Trabalhar 80 horas para ganhar 20% mais"],cat:"mentalidade"},
+    {q:"O que significa 'hedge' num contexto de investimentos?",a:2,opts:["Investir em acções de alto risco","Vender todos os activos","Uma estratégia para reduzir riscos/proteger investimentos","Alavancagem máxima"],cat:"investimento"},
+    {q:"O que é 'pensamento sistémico' aplicado a negócios?",a:1,opts:["Usar apenas software para gerir o negócio","Entender como todas as partes do negócio interagem e se influenciam","Contratar muitos funcionários especializados","Seguir apenas um plano rígido"],cat:"mentalidade"},
+    {q:"Qual é a filosofia de investimento de Ray Dalio?",a:3,opts:["Investir apenas em tecnologia","Concentrar todo o capital num activo forte","Evitar investimentos internacionais","'All weather portfolio': diversificação que funciona em qualquer ciclo económico"],cat:"investimento"},
+    {q:"O que é 'capital intelectual' segundo a economia moderna?",a:0,opts:["O conjunto de conhecimentos, habilidades e inovação que geram valor económico","O dinheiro investido em educação","Os livros e computadores de uma empresa","O número de licenciados numa empresa"],cat:"mentalidade"},
+    {q:"Por que é que uma casa própria pode ser um passivo, não activo?",a:2,opts:["Porque as casas nunca valorizam","Porque não se pode vender","Porque gera despesas (condomínio, impostos, manutenção) sem gerar rendimento","Porque o banco é o verdadeiro dono"],cat:"mentalidade"},
+    {q:"O que é 'valor intrínseco' de uma acção?",a:1,opts:["O preço actual no mercado","O valor real da empresa com base nos seus fundamentos","O preço histórico mais alto","O valor contabilístico dos activos"],cat:"investimento"},
+    {q:"Qual é o conceito de 'destruição criativa' de Schumpeter?",a:3,opts:["Destruir empresas concorrentes","Quebrar contratos para renovar acordos","Reduzir custos eliminando departamentos","O processo em que inovação destrói indústrias antigas e cria novas"],cat:"mentalidade"},
+    {q:"O que é a 'teoria dos jogos' aplicada a negócios?",a:0,opts:["Estudo matemático de decisões estratégicas onde o resultado depende das acções dos outros","Uma estratégia de gamificação de produtos","Design de aplicações de jogo","Análise de riscos de apostas"],cat:"mentalidade"},
+    {q:"O que diferencia empreendedor de 1ª geração de um herdeiro rico?",a:2,opts:["O empreendedor tem mais sorte","O herdeiro é sempre mais bem sucedido","O empreendedor desenvolveu mentalidade de criação de valor do zero","Não há diferença prática"],cat:"mentalidade"},
+    {q:"O que é 'assimetria de informação' nos mercados financeiros?",a:1,opts:["Mercados onde os preços são sempre justos","Situação em que uma parte tem mais informação que outra, criando vantagem","Volatilidade alta dos mercados","Diferença entre juros de depósito e crédito"],cat:"investimento"},
+    {q:"O que é 'pensamento de abundância'?",a:3,opts:["Gastar sem controlo","Ignorar limitações de recursos","Acumular mais do que necessitas","Acreditar que há oportunidades suficientes para todos e focar em criar, não competir"],cat:"mentalidade"},
+    {q:"O que é o 'mapa mental financeiro' que herdamos dos pais?",a:0,opts:["Os padrões e crenças inconscientes sobre dinheiro que absorvemos na infância e que guiam decisões financeiras","Um plano de investimento familiar","Uma análise do histórico financeiro familiar","Um relatório de crédito"],cat:"mentalidade"},
+  ]
+};
+
+// Flatten for speed mode
+const SPEED_QUESTIONS = [...ALL_QUESTIONS.easy, ...ALL_QUESTIONS.medium, ...ALL_QUESTIONS.hard];
+
+// ============================================================
+// MOTIVATIONAL QUOTES
+// ============================================================
+const MOTIVATIONS = [
+  {q:"O teu futuro financeiro é criado pelo que fazes hoje, não amanhã.",a:"Robert Kiyosaki"},
+  {q:"Os pobres e a classe média trabalham pelo dinheiro. Os ricos fazem o dinheiro trabalhar para eles.",a:"Robert Kiyosaki"},
+  {q:"Não é quanto dinheiro ganhas que importa, mas quanto guardas.",a:"Robert Kiyosaki"},
+  {q:"O investimento mais inteligente que podes fazer é na tua própria educação.",a:"Benjamin Franklin"},
+  {q:"A riqueza não é construída com um único salário grande, mas com hábitos pequenos e consistentes.",a:"Dito Popular"},
+  {q:"Não esperes pelas oportunidades certas. Aproveita a ocasião e torna-a perfeita.",a:"Napoleon Hill"},
+  {q:"A maior recompensa do nosso trabalho não é o que nos pagam por ele, mas o que nos tornamos com ele.",a:"John Ruskin"},
+  {q:"Em Moçambique, como no mundo, a educação financeira é a arma mais poderosa.",a:"Edd Inguane"},
+  {q:"Não é a quantidade de dinheiro que define a riqueza, é a liberdade que ele proporciona.",a:"Inguan AI Work"},
+  {q:"Cada metical poupado hoje é um passo para a liberdade financeira amanhã.",a:"Edd Inguane"},
+  {q:"O sucesso é a soma de pequenos esforços repetidos dia após dia.",a:"Robert Collier"},
+  {q:"Quem não aprende a gerir pequenas quantias, não saberá gerir grandes.",a:"Provérbio Financeiro"},
+  {q:"A pobreza não é falta de dinheiro; é falta de informação e de visão.",a:"Edd Inguane"},
+  {q:"Se não encontrares uma forma de ganhar dinheiro enquanto dormes, trabalharás até morrer.",a:"Warren Buffett"},
+  {q:"O mercado financeiro é um dispositivo para transferir dinheiro dos impacientes para os pacientes.",a:"Warren Buffett"},
+  {q:"Nunca dependa de uma única fonte de rendimento. Cria uma segunda fonte.",a:"Warren Buffett"},
+  {q:"O maior risco é não correr nenhum risco.",a:"Mark Zuckerberg"},
+  {q:"Empreendedores não esperam que a oportunidade bata à porta — eles vão até ela.",a:"Dito Empreendedor"},
+  {q:"A diferença entre sonho e objectivo é um plano de acção.",a:"Dave Ramsey"},
+  {q:"Transforma a tua paixão em lucro e nunca mais trabalharás um dia na tua vida.",a:"Confúcio"},
+  {q:"Em Moçambique há oportunidades em cada esquina — precisas apenas de olhos treinados para as ver.",a:"Edd Inguane"},
+  {q:"Compra experiências, não coisas. As experiências valorizam; as coisas depreciam.",a:"Filosofia Minimalista"},
+  {q:"Não é questão de 'se' mas de 'quando' — com persistência, a riqueza é inevitável.",a:"Inguan AI Work"},
+  {q:"Cada dia que não investes em ti mesmo é um dia de trabalho para o concorrente.",a:"Dito de Empreendedor"},
+  {q:"A sua riqueza cresce na proporção exacta da sua coragem para agir.",a:"Napoleon Hill"},
+  {q:"Conhecimento é o único activo que ninguém te pode tirar.",a:"Benjamin Franklin"},
+  {q:"O dinheiro é um bom servo mas um mau amo.",a:"Francis Bacon"},
+  {q:"Poupa primeiro, depois vive com o resto — não o contrário.",a:"Dave Ramsey"},
+  {q:"A mentalidade certa abre mais portas do que o capital certo.",a:"Edd Inguane"},
+  {q:"Pequenas vitórias diárias constroem grandes conquistas ao longo do tempo.",a:"Inguan AI Work"},
+  {q:"Acorda todos os dias com fome de crescer. O conforto é o maior inimigo do progresso.",a:"Edd Inguane"},
+  {q:"A disciplina financeira hoje é a liberdade de amanhã. Escolhe a dor do esforço agora ou a dor do arrependimento depois.",a:"Jim Rohn"},
+  {q:"Não trabalhes pelo dinheiro. Aprende a como o dinheiro trabalha.",a:"Robert Kiyosaki"},
+  {q:"O teu salário é o suborno que te pagam para esqueceres os teus sonhos.",a:"Steve Harvey"},
+  {q:"Milhões de pessoas não sabem de onde vem o dinheiro delas. Os ricos sabem exactamente.",a:"T. Harv Eker"},
+  {q:"A mentalidade é o factor mais poderoso no sucesso financeiro. Tudo o mais é técnica.",a:"T. Harv Eker"},
+  {q:"Se quiseres ser rico, primeiro para de tentar parecer rico.",a:"Robert Kiyosaki"},
+  {q:"Os ricos compram activos. A classe média compra passivos que pensam ser activos.",a:"Robert Kiyosaki"},
+  {q:"O dinheiro não traz felicidade, mas a liberdade que ele dá aproxima muito.",a:"Edd Inguane"},
+  {q:"Em vez de perguntar 'posso pagar isto?', pergunta 'como posso pagar isto?'. O 'como' activa o cérebro.",a:"Robert Kiyosaki"},
+  {q:"A maior tragédia da vida não é a morte, mas o que deixamos morrer dentro de nós enquanto vivemos.",a:"Norman Cousins"},
+  {q:"Um plano sem acção é apenas um sonho. Acção sem plano é caos. Combina os dois e tens poder.",a:"Inguan AI Work"},
+  {q:"Não tens de ser grande para começar. Mas tens de começar para ser grande.",a:"Zig Ziglar"},
+  {q:"A pobreza mais perigosa é a pobreza de ambição.",a:"Henry David Thoreau"},
+  {q:"O segredo dos ricos não é trabalhar mais — é trabalhar com mais inteligência e criar sistemas.",a:"Edd Inguane"},
+  {q:"Todo o grande empreendedor começou sem experiência. O que os diferenciou foi a coragem de começar.",a:"Inguan AI Work"},
+  {q:"Investir em ti mesmo é o retorno mais alto que jamais obterás.",a:"Warren Buffett"},
+  {q:"Não há elevador para o sucesso. Tens de usar as escadas, um degrau de cada vez.",a:"Joe Girard"},
+  {q:"O dinheiro segue o valor. Cria valor suficiente e o dinheiro vem naturalmente.",a:"Edd Inguane"},
+  {q:"Se Moçambique vai crescer, serão os seus jovens empreendedores que o farão crescer.",a:"Inguan AI Work"},
+  {q:"A educação financeira não se aprende na escola — aprende-se na vida e com quem já chegou lá.",a:"Edd Inguane"},
+  {q:"Sonhar é grátis. Executar é o que custa — e é o que separa os ricos dos que ficam a sonhar.",a:"Inguan AI Work"},
+  {q:"Cada fracasso é uma lição que te aproxima do sucesso, não um sinal para desistires.",a:"Thomas Edison"},
+  {q:"O homem que move montanhas começa por carregar pedras pequenas.",a:"Confúcio"},
+  {q:"Não contes o dinheiro que tens. Conta o valor que crias.",a:"Edd Inguane"},
+  {q:"A tua rede de contactos determina o teu valor líquido. Rodeia-te de pessoas que já chegaram onde queres chegar.",a:"Porter Gale"},
+  {q:"Riqueza não é ter tudo o que queres. É não precisar de nada além do que tens.",a:"Filosofia Estoica"},
+  {q:"O teu banco não se importa com os teus sonhos. Importa-se com os teus hábitos.",a:"Edd Inguane"},
+  {q:"Cada vez que gastas dinheiro estás a votar no tipo de mundo em que queres viver.",a:"Anna Lappé"},
+  {q:"A persistência pode mudar o fracasso em realização extraordinária.",a:"Matt Biondi"},
+  {q:"Em 5 anos, serás exatamente onde as tuas decisões de hoje te colocarem.",a:"Inguan AI Work"},
+];
+
+// ============================================================
+// AVATAR SYSTEM
+// ============================================================
+const AVATARS = [
+  {emoji:"🤓",name:"Aprendiz",xp:0},
+  {emoji:"💰",name:"Poupador",xp:200},
+  {emoji:"📈",name:"Investidor",xp:500},
+  {emoji:"🏆",name:"Campeão",xp:1000},
+  {emoji:"👑",name:"Milionário",xp:2000},
+  {emoji:"🦁",name:"Leão",xp:3000},
+  {emoji:"🚀",name:"Rocket",xp:5000},
+  {emoji:"💎",name:"Diamante",xp:8000},
+  {emoji:"🌟",name:"Estrela",xp:12000},
+  {emoji:"🔥",name:"Lendário",xp:20000},
+];
+
+const LEVELS = [
+  {name:"APRENDIZ",min:0,max:199,color:"#94a3b8"},
+  {name:"POUPADOR",min:200,max:499,color:"#34d399"},
+  {name:"INVESTIDOR",min:500,max:999,color:"#60a5fa"},
+  {name:"MILIONÁRIO",min:1000,max:1999,color:"#fcd34d"},
+  {name:"MAGNATA",min:2000,max:4999,color:"#f472b6"},
+  {name:"LENDÁRIO",min:5000,max:Infinity,color:"#fb923c"},
+];
+
+const XP_PER_CORRECT = {easy:10,medium:20,hard:35};
+const TIMER_SECONDS = {easy:30,medium:20,hard:15};
+const CATEGORY_COLORS = {financas:["rgba(59,130,246,0.3)","#93c5fd"],mentalidade:["rgba(168,85,247,0.3)","#c084fc"],poupanca:["rgba(16,185,129,0.3)","#6ee7b7"],investimento:["rgba(245,158,11,0.3)","#fcd34d"]};
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  xp:0,playerName:"Jogador",selectedAvatar:0,
+  totalQuizzes:0,totalCorrect:0,totalQuestions:0,streak:1,lastPlay:"",
+  stats:{easy:{played:0,correct:0},medium:{played:0,correct:0},hard:{played:0,correct:0}}
+};
+let quiz = {questions:[],current:0,correct:0,wrong:0,xpEarned:0,level:"easy",category:"all",timerInterval:null,timeLeft:0,answered:false};
+let speed = {interval:null,timerInterval:null,score:0,correct:0,wrong:0,combo:0,current:null,active:false};
+let currentLevel = "easy";
+let selectedCategory = "all";
+let motivIndex = 0;
+let deferredInstall = null;
+
+// ============================================================
+// STORAGE
+// ============================================================
+function saveState(){try{localStorage.setItem('fq_state',JSON.stringify(state));}catch(e){}}
+function loadState(){
+  try{
+    const s=localStorage.getItem('fq_state');
+    if(s){
+      const parsed=JSON.parse(s);
+      state={...state,...parsed};
+    }
+    // streak logic
+    const today=new Date().toDateString();
+    if(state.lastPlay){
+      const last=new Date(state.lastPlay);
+      const diff=Math.floor((new Date()-last)/(1000*60*60*24));
+      if(diff>1) state.streak=1;
+    }
+  }catch(e){}
+}
+function saveRanking(entry){
+  try{
+    let r=JSON.parse(localStorage.getItem('fq_ranking')||'[]');
+    // Check if player already exists, update if better
+    const idx=r.findIndex(x=>x.name===entry.name);
+    if(idx>=0){if(entry.xp>r[idx].xp||entry.score>r[idx].score){r[idx]={...r[idx],...entry};}}
+    else{r.push(entry);}
+    r.sort((a,b)=>b.xp-a.xp);
+    r=r.slice(0,20);
+    localStorage.setItem('fq_ranking',JSON.stringify(r));
+  }catch(e){}
+}
+function getRanking(){try{return JSON.parse(localStorage.getItem('fq_ranking')||'[]');}catch(e){return[];}}
+
+// ============================================================
+// STARS CREATION
+// ============================================================
+function createStars(){
+  const c=document.getElementById('starsContainer');
+  for(let i=0;i<60;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const size=Math.random()*3+1;
+    s.style.cssText=`width:${size}px;height:${size}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s;`;
+    c.appendChild(s);
+  }
+}
+
+// ============================================================
+// SCREEN NAVIGATION
+// ============================================================
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goToMenu(){
+  updateMenuUI();
+  showScreen('menu');
+}
+
+// ============================================================
+// MENU UI UPDATE
+// ============================================================
+function getLevel(xp){return LEVELS.find(l=>xp>=l.min&&xp<=l.max)||LEVELS[0];}
+function getAvatar(xp){
+  let av=AVATARS[0];
+  for(const a of AVATARS){if(xp>=a.xp)av=a;else break;}
+  // Use selected avatar if unlocked
+  if(state.xp>=AVATARS[state.selectedAvatar].xp) return AVATARS[state.selectedAvatar];
+  return av;
+}
+function updateMenuUI(){
+  const lv=getLevel(state.xp);
+  const av=getAvatar(state.xp);
+  document.getElementById('menuAvatar').textContent=av.emoji;
+  document.getElementById('menuPlayerName').textContent=state.playerName;
+  document.getElementById('menuPlayerLevel').textContent='⭐ '+lv.name;
+  document.getElementById('menuXpVal').textContent=state.xp;
+  const pct=Math.min(100,((state.xp-lv.min)/(lv.max-lv.min||1))*100);
+  document.getElementById('menuXpBar').style.width=pct+'%';
+  document.getElementById('streakDays').textContent=state.streak||1;
+}
+
+// ============================================================
+// CATEGORY SELECTION
+// ============================================================
+function selectCategory(el,cat){
+  document.querySelectorAll('.cat-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  selectedCategory=cat;
+}
+
+// ============================================================
+// QUIZ START
+// ============================================================
+function startQuiz(level){
+  currentLevel=level;
+  quiz.level=level;
+  quiz.category=selectedCategory;
+  // Get questions
+  let pool=[...ALL_QUESTIONS[level]];
+  if(selectedCategory!=='all') pool=pool.filter(q=>q.cat===selectedCategory);
+  if(pool.length<1) pool=[...ALL_QUESTIONS[level]];
+  // Shuffle
+  pool=shuffle(pool);
+  quiz.questions=pool.slice(0,20);
+  quiz.current=0; quiz.correct=0; quiz.wrong=0; quiz.xpEarned=0;
+  showScreen('quiz');
+  renderQuestion();
+}
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function renderQuestion(){
+  const q=quiz.questions[quiz.current];
+  const total=quiz.questions.length;
+  const pct=((quiz.current)/total)*100;
+  const lvLabels={easy:'🟢 FÁCIL',medium:'🟡 MÉDIO',hard:'🔴 DIFÍCIL'};
+  document.getElementById('qProgress').textContent=`Pergunta ${quiz.current+1} / ${total}`;
+  document.getElementById('qLevel').textContent=lvLabels[quiz.level];
+  document.getElementById('qProgressFill').style.width=Math.max(5,pct)+'%';
+  document.getElementById('quizXp').textContent=quiz.xpEarned;
+  // Category badge
+  const cat=q.cat||'financas';
+  const [bg,col]=CATEGORY_COLORS[cat]||["rgba(124,58,237,0.3)","#c084fc"];
+  const catLabels={financas:'💰 FINANÇAS',mentalidade:'🧠 MENTALIDADE',poupanca:'🏦 POUPANÇA',investimento:'📈 INVESTIMENTO'};
+  const badge=document.getElementById('qCatBadge');
+  badge.style.background=bg; badge.style.color=col; badge.textContent=catLabels[cat]||cat.toUpperCase();
+  document.getElementById('qText').textContent=q.q;
+  // Options
+  const letters=['A','B','C','D'];
+  // Shuffle options
+  const opts=q.opts.map((o,i)=>({text:o,original:i}));
+  const shuffledOpts=shuffle(opts);
+  const correctOriginal=q.a;
+  const correctShuffled=shuffledOpts.findIndex(o=>o.original===correctOriginal);
+  const grid=document.getElementById('optionsGrid');
+  grid.innerHTML='';
+  shuffledOpts.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.innerHTML=`<div class="option-letter">${letters[i]}</div><div class="option-text">${opt.text}</div>`;
+    btn.onclick=()=>selectAnswer(btn,i===correctShuffled);
+    grid.appendChild(btn);
+  });
+  quiz.answered=false;
+  startTimer();
+}
+function startTimer(){
+  clearInterval(quiz.timerInterval);
+  const secs=TIMER_SECONDS[quiz.level];
+  quiz.timeLeft=secs;
+  const fill=document.getElementById('timerFill');
+  const label=document.getElementById('timerLabel');
+  fill.style.width='100%';
+  fill.classList.remove('urgent');
+  label.textContent=secs+'s';
+  quiz.timerInterval=setInterval(()=>{
+    quiz.timeLeft--;
+    const pct=(quiz.timeLeft/secs)*100;
+    fill.style.width=pct+'%';
+    label.textContent=quiz.timeLeft+'s';
+    if(quiz.timeLeft<=3) fill.classList.add('urgent');
+    if(quiz.timeLeft<=0){
+      clearInterval(quiz.timerInterval);
+      if(!quiz.answered) timeoutAnswer();
+    }
+  },1000);
+}
+function timeoutAnswer(){
+  quiz.answered=true;
+  quiz.wrong++;
+  // Highlight correct
+  const btns=document.querySelectorAll('.option-btn');
+  btns.forEach(b=>b.disabled=true);
+  // Find correct btn (first correct)
+  showToast('⏰ Tempo esgotado!','timeout');
+  playBeep('wrong');
+  setTimeout(()=>nextQuestion(),2000);
+}
+function selectAnswer(btn,isCorrect){
+  if(quiz.answered) return;
+  quiz.answered=true;
+  clearInterval(quiz.timerInterval);
+  document.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+  if(isCorrect){
+    btn.classList.add('correct');
+    const earned=XP_PER_CORRECT[quiz.level];
+    quiz.correct++;
+    quiz.xpEarned+=earned;
+    showToast('✅ Correcto! +'+earned+' XP','correct');
+    showXpPopup('+'+earned+' XP');
+    playBeep('correct');
+  } else {
+    btn.classList.add('wrong');
+    quiz.wrong++;
+    // Highlight correct
+    document.querySelectorAll('.option-btn').forEach((b,i)=>{
+      // We need to find the correct one — stored as data
+    });
+    showToast('❌ Errado!','wrong');
+    playBeep('wrong');
+  }
+  document.getElementById('quizXp').textContent=quiz.xpEarned;
+  setTimeout(()=>nextQuestion(),1800);
+}
+function nextQuestion(){
+  quiz.current++;
+  if(quiz.current>=quiz.questions.length){
+    endQuiz();
+  } else {
+    renderQuestion();
+  }
+}
+function endQuiz(){
+  clearInterval(quiz.timerInterval);
+  const prevXp=state.xp;
+  const prevLevel=getLevel(prevXp).name;
+  state.xp+=quiz.xpEarned;
+  state.totalQuizzes++;
+  state.totalCorrect+=quiz.correct;
+  state.totalQuestions+=quiz.questions.length;
+  state.lastPlay=new Date().toDateString();
+  state.stats[quiz.level].played++;
+  state.stats[quiz.level].correct+=quiz.correct;
+  saveState();
+  // Ranking entry
+  saveRanking({name:state.playerName,xp:state.xp,avatar:getAvatar(state.xp).emoji,level:getLevel(state.xp).name,score:quiz.correct});
+  // Show result
+  const total=quiz.questions.length;
+  const acc=Math.round((quiz.correct/total)*100);
+  const newLevel=getLevel(state.xp).name;
+  // Trophy & title
+  let trophy='🏆',title='FANTÁSTICO!',sub='';
+  if(acc===100){trophy='💎';title='PERFEITO!';sub='100% de precisão! Incrível!';}
+  else if(acc>=80){trophy='🏆';title='EXCELENTE!';sub='Tens uma mente financeira forte!';}
+  else if(acc>=60){trophy='⭐';title='BOM TRABALHO!';sub='Continua a melhorar!';}
+  else if(acc>=40){trophy='📚';title='PRECISAS PRATICAR';sub='Revê os conceitos e tenta de novo!';}
+  else{trophy='💪';title='NÃO DESISTAS!';sub='A prática leva à perfeição!';}
+  document.getElementById('resultTrophy').textContent=trophy;
+  document.getElementById('resultTitle').textContent=title;
+  document.getElementById('resultSubtitle').textContent=sub;
+  document.getElementById('resCorrect').textContent=quiz.correct;
+  document.getElementById('resWrong').textContent=quiz.wrong;
+  document.getElementById('resXp').textContent='+'+quiz.xpEarned;
+  document.getElementById('resAccuracy').textContent=acc+'%';
+  // Stars
+  const stars=acc>=80?3:acc>=50?2:1;
+  document.getElementById('resultStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  // Level up
+  const lvUp=document.getElementById('levelUpBanner');
+  if(newLevel!==prevLevel){
+    lvUp.style.display='block';
+    document.getElementById('levelUpText').textContent='🎉 Subiste para '+newLevel+'!';
+  } else {lvUp.style.display='none';}
+  showScreen('result');
+  updateMenuUI();
+}
+function confirmQuit(){
+  showModal('🚪','Abandonar Quiz?','O teu progresso neste quiz será perdido. Tens a certeza?',[
+    {text:'Continuar a jogar',cls:'btn-primary',fn:()=>closeModal()},
+    {text:'Abandonar',cls:'btn-danger',fn:()=>{clearInterval(quiz.timerInterval);closeModal();showScreen('menu');}}
+  ]);
+}
+
+// ============================================================
+// SPEED MODE
+// ============================================================
+function startSpeedMode(){
+  speed.score=0; speed.correct=0; speed.wrong=0; speed.combo=0; speed.active=true;
+  showScreen('speed-mode');
+  document.getElementById('speedScore').textContent=0;
+  document.getElementById('speedCorrect').textContent=0;
+  document.getElementById('speedWrong').textContent=0;
+  document.getElementById('speedCombo').textContent='';
+  let timeLeft=60;
+  document.getElementById('speedTimerBig').textContent=timeLeft;
+  const shuffled=shuffle([...SPEED_QUESTIONS]);
+  let idx=0;
+  function loadQ(){
+    if(idx>=shuffled.length) idx=0;
+    speed.current=shuffled[idx++];
+    renderSpeedQ();
+  }
+  loadQ();
+  clearInterval(speed.timerInterval);
+  speed.timerInterval=setInterval(()=>{
+    timeLeft--;
+    document.getElementById('speedTimerBig').textContent=timeLeft;
+    const el=document.getElementById('speedTimerBig');
+    if(timeLeft<=10){el.style.color='#ef4444';el.style.textShadow='0 0 20px rgba(239,68,68,0.8)';}
+    else{el.style.color='var(--gold-light)';el.style.textShadow='var(--neon-gold)';}
+    if(timeLeft<=0){endSpeedMode(false);}
+  },1000);
+  function renderSpeedQ(){
+    const q=speed.current;
+    document.getElementById('speedQText').textContent=q.q;
+    const opts=q.opts.map((o,i)=>({text:o,idx:i}));
+    const shuffledOpts=shuffle(opts);
+    const correctOriginal=q.a;
+    const correctShuffled=shuffledOpts.findIndex(o=>o.idx===correctOriginal);
+    const container=document.getElementById('speedOptions');
+    container.innerHTML='';
+    shuffledOpts.forEach((opt,i)=>{
+      const btn=document.createElement('div');
+      btn.className='speed-opt';
+      btn.textContent=opt.text;
+      btn.onclick=()=>{
+        if(!speed.active) return;
+        const correct=i===correctShuffled;
+        btn.classList.add(correct?'correct':'wrong');
+        if(correct){
+          speed.combo++;speed.correct++;
+          const pts=10+(speed.combo>1?speed.combo*2:0);
+          speed.score+=pts;
+          playBeep('correct');
+          document.getElementById('speedCombo').textContent=speed.combo>1?`🔥 COMBO x${speed.combo}!`:'';
+        } else {
+          speed.combo=0;speed.wrong++;
+          playBeep('wrong');
+          document.getElementById('speedCombo').textContent='';
+        }
+        document.getElementById('speedScore').textContent=speed.score;
+        document.getElementById('speedCorrect').textContent=speed.correct;
+        document.getElementById('speedWrong').textContent=speed.wrong;
+        container.querySelectorAll('.speed-opt').forEach(b=>b.onclick=null);
+        setTimeout(()=>loadQ(),700);
+      };
+      container.appendChild(btn);
+    });
+  }
+  // Store render fn
+  speed.renderQ=renderSpeedQ;
+  speed.loadQ=loadQ;
+}
+function endSpeedMode(manual){
+  if(!speed.active) return;
+  speed.active=false;
+  clearInterval(speed.timerInterval);
+  const xpEarned=Math.floor(speed.score/5);
+  state.xp+=xpEarned;
+  saveState();
+  saveRanking({name:state.playerName,xp:state.xp,avatar:getAvatar(state.xp).emoji,level:getLevel(state.xp).name,score:speed.score,mode:'speed'});
+  updateMenuUI();
+  showModal('⚡','Modo Contra-Relógio',
+    `Pontuação: ${speed.score} pts\n✅ ${speed.correct} corretas | ❌ ${speed.wrong} erradas\n⚡ +${xpEarned} XP ganhos!`,[
+    {text:'Jogar Novamente',cls:'btn-primary',fn:()=>{closeModal();startSpeedMode();}},
+    {text:'Menu',cls:'btn-outline',fn:()=>{closeModal();showScreen('menu');}}
+  ]);
+}
+
+// ============================================================
+// RANKING
+// ============================================================
+function renderRanking(){
+  const data=getRanking();
+  const list=document.getElementById('rankingList');
+  if(data.length===0){
+    list.innerHTML='<div class="empty-ranking"><span class="icon">🏆</span>Ainda não há jogadores no ranking.<br>Completa um quiz para aparecer aqui!</div>';
+    return;
+  }
+  const medals=['🥇','🥈','🥉'];
+  const posClass=['gold','silver','bronze'];
+  list.innerHTML=data.map((p,i)=>{
+    const isCurrent=p.name===state.playerName;
+    const pos=i<3?medals[i]:`#${i+1}`;
+    const posC=i<3?posClass[i]:'';
+    return `<div class="rank-item${isCurrent?' current-player':''}">
+      <div class="rank-pos ${posC}">${pos}</div>
+      <div class="rank-avatar">${p.avatar||'🤓'}</div>
+      <div class="rank-info">
+        <div class="rank-name">${p.name}${isCurrent?' <span style="font-size:11px;color:var(--purple-light)">(Tu)</span>':''}</div>
+        <div class="rank-details">${p.level||'APRENDIZ'} ${p.mode==='speed'?'· ⚡ Speed':''}</div>
+      </div>
+      <div class="rank-xp">${p.xp} XP</div>
+    </div>`;
+  }).join('');
+}
+function clearRankingConfirm(){
+  showModal('🗑️','Limpar Ranking','Tens a certeza? Todos os dados do ranking serão apagados.',[
+    {text:'Cancelar',cls:'btn-outline',fn:()=>closeModal()},
+    {text:'Limpar',cls:'btn-danger',fn:()=>{localStorage.removeItem('fq_ranking');renderRanking();closeModal();}}
+  ]);
+}
+
+// ============================================================
+// PROFILE
+// ============================================================
+function showProfileScreen(){
+  const lv=getLevel(state.xp);
+  const av=getAvatar(state.xp);
+  document.getElementById('profileAvatarBig').textContent=av.emoji;
+  document.getElementById('profileNameDisplay').textContent=state.playerName;
+  document.getElementById('profileLevelBadge').textContent='⭐ '+lv.name;
+  document.getElementById('profileXpBig').textContent=state.xp;
+  const pct=Math.min(100,((state.xp-lv.min)/(lv.max-lv.min||1))*100);
+  document.getElementById('profileXpFill').style.width=pct+'%';
+  document.getElementById('xpMin').textContent=lv.min+' XP';
+  document.getElementById('xpNextLevel').textContent=lv.max===Infinity?'Nível Máximo!':'Próximo: '+lv.max+' XP';
+  document.getElementById('statQuizzes').textContent=state.totalQuizzes;
+  document.getElementById('statCorrect').textContent=state.totalCorrect;
+  const acc=state.totalQuestions>0?Math.round((state.totalCorrect/state.totalQuestions)*100):0;
+  document.getElementById('statAccuracy').textContent=acc+'%';
+  document.getElementById('nameInput').value=state.playerName;
+  // Avatars
+  const grid=document.getElementById('avatarsGrid');
+  grid.innerHTML=AVATARS.map((a,i)=>{
+    const unlocked=state.xp>=a.xp;
+    const selected=state.selectedAvatar===i;
+    return `<div class="avatar-item ${unlocked?'unlocked':''} ${selected?'selected':''}" onclick="${unlocked?'selectAvatar('+i+')':''}">
+      <div class="avatar-emoji">${a.emoji}</div>
+      <div class="avatar-req">${unlocked?a.name:a.xp+' XP'}</div>
+    </div>`;
+  }).join('');
+  showScreen('profile');
+}
+function selectAvatar(i){
+  if(state.xp<AVATARS[i].xp) return;
+  state.selectedAvatar=i;
+  saveState();
+  showProfileScreen();
+}
+function saveName(){
+  const val=document.getElementById('nameInput').value.trim();
+  if(!val){showModal('⚠️','Nome inválido','Por favor, escreve um nome válido.',[{text:'OK',cls:'btn-primary',fn:()=>closeModal()}]);return;}
+  state.playerName=val;
+  saveState();
+  updateMenuUI();
+  showModal('✅','Nome Guardado!','O teu nome foi actualizado com sucesso!',[{text:'Continuar',cls:'btn-primary',fn:()=>{closeModal();showProfileScreen();}}]);
+}
+
+// ============================================================
+// MOTIVATION
+// ============================================================
+function loadMotivation(){
+  motivIndex=Math.floor(Math.random()*MOTIVATIONS.length);
+  renderMotiv();
+}
+function renderMotiv(){
+  const m=MOTIVATIONS[motivIndex];
+  document.getElementById('motivQuote').textContent=m.q;
+  document.getElementById('motivAuthor').textContent='— '+m.a;
+  document.getElementById('motivNum').textContent=(motivIndex+1)+' / '+MOTIVATIONS.length;
+  // Dots
+  const dots=document.getElementById('motivDots');
+  const total=Math.min(MOTIVATIONS.length,10);
+  dots.innerHTML=Array.from({length:total},(_,i)=>`<div class="nav-dot ${i===motivIndex%total?'active':''}" onclick="motivIndex=${i};renderMotiv()"></div>`).join('');
+}
+function nextMotiv(){motivIndex=(motivIndex+1)%MOTIVATIONS.length;renderMotiv();}
+function prevMotiv(){motivIndex=(motivIndex-1+MOTIVATIONS.length)%MOTIVATIONS.length;renderMotiv();}
+function shareMotivation(){
+  const m=MOTIVATIONS[motivIndex];
+  const text=`💡 "${m.q}" — ${m.a}\n\n🧠 Aprende finanças e mentalidade com o FinQuiz!\n📲 por Edd Inguane · Inguan AI Work`;
+  shareText(text);
+}
+
+// ============================================================
+// SHARE
+// ============================================================
+function shareResult(){
+  const acc=state.totalQuestions>0?Math.round((state.totalCorrect/state.totalQuestions)*100):0;
+  const lv=getLevel(state.xp);
+  const text=`🎯 Acabei de completar um quiz no FinQuiz!\n\n✅ ${quiz.correct}/${quiz.questions.length} corretas\n⚡ +${quiz.xpEarned} XP\n🏆 Nível: ${lv.name}\n📊 Total XP: ${state.xp}\n\n🧠 Treina as tuas finanças com o FinQuiz!\nPor Edd Inguane · Inguan AI Work`;
+  shareText(text);
+}
+function shareApp(){
+  const text=`🧠 FinQuiz — Mestre das Finanças!\n\nTreina o teu cérebro financeiro com +300 perguntas sobre:\n💰 Finanças pessoais\n📈 Investimentos\n🏦 Poupança\n🧠 Mentalidade Rica\n\n⚡ Sistema de XP, Níveis e Ranking!\nPor Edd Inguane · Inguan AI Work 🇲🇿`;
+  shareText(text);
+}
+function shareText(text){
+  if(navigator.share){
+    navigator.share({title:'FinQuiz — Mestre das Finanças',text}).catch(()=>copyToClipboard(text));
+  } else {copyToClipboard(text);}
+}
+function copyToClipboard(text){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(()=>showModal('📋','Copiado!','Texto copiado! Cola numa mensagem para partilhar.',[{text:'OK',cls:'btn-primary',fn:()=>closeModal()}]));
+  } else {
+    const ta=document.createElement('textarea');
+    ta.value=text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showModal('📋','Copiado!','Texto copiado! Cola numa mensagem para partilhar.',[{text:'OK',cls:'btn-primary',fn:()=>closeModal()}]);
+  }
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function showModal(icon,title,text,actions){
+  document.getElementById('modalIcon').textContent=icon;
+  document.getElementById('modalTitle').textContent=title;
+  document.getElementById('modalText').textContent=text;
+  const actContainer=document.getElementById('modalActions');
+  actContainer.innerHTML='';
+  actions.forEach(a=>{
+    const btn=document.createElement('button');
+    btn.className='btn '+a.cls;
+    btn.textContent=a.text;
+    btn.onclick=a.fn;
+    actContainer.appendChild(btn);
+  });
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+
+// ============================================================
+// TOAST & XP POPUP
+// ============================================================
+function showToast(text,type){
+  const t=document.createElement('div');
+  t.className=`feedback-toast ${type}`;
+  t.textContent=text;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2100);
+}
+function showXpPopup(text){
+  const p=document.createElement('div');
+  p.className='xp-popup';
+  p.textContent=text;
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),1300);
+}
+
+// ============================================================
+// AUDIO (Web Audio API beeps)
+// ============================================================
+let audioCtx=null;
+function getAudioCtx(){
+  if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+function playBeep(type){
+  try{
+    const ctx=getAudioCtx();
+    const o=ctx.createOscillator();
+    const g=ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    if(type==='correct'){
+      o.frequency.setValueAtTime(523,ctx.currentTime);
+      o.frequency.setValueAtTime(659,ctx.currentTime+0.1);
+      o.frequency.setValueAtTime(784,ctx.currentTime+0.2);
+      g.gain.setValueAtTime(0.3,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.5);
+      o.start(ctx.currentTime); o.stop(ctx.currentTime+0.5);
+    } else {
+      o.type='sawtooth';
+      o.frequency.setValueAtTime(200,ctx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(80,ctx.currentTime+0.3);
+      g.gain.setValueAtTime(0.3,ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.3);
+      o.start(ctx.currentTime); o.stop(ctx.currentTime+0.3);
+    }
+  }catch(e){}
+}
+function playVictory(){
+  try{
+    const ctx=getAudioCtx();
+    const notes=[523,659,784,1047];
+    notes.forEach((freq,i)=>{
+      const o=ctx.createOscillator();
+      const g=ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value=freq;
+      g.gain.setValueAtTime(0.2,ctx.currentTime+i*0.15);
+      g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+i*0.15+0.4);
+      o.start(ctx.currentTime+i*0.15);
+      o.stop(ctx.currentTime+i*0.15+0.4);
+    });
+  }catch(e){}
+}
+
+// ============================================================
+// PWA INSTALL
+// ============================================================
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault(); deferredInstall=e;
+  setTimeout(()=>document.getElementById('installBanner').classList.add('visible'),3000);
+});
+function installApp(){
+  if(deferredInstall){deferredInstall.prompt();deferredInstall.userChoice.then(()=>{deferredInstall=null;dismissInstall();});}
+}
+function dismissInstall(){document.getElementById('installBanner').classList.remove('visible');}
+
+// ============================================================
+// SERVICE WORKER REGISTRATION
+// ============================================================
+if('serviceWorker' in navigator){
+  const swCode=`
+const CACHE='finquiz-v1';
+const ASSETS=['./','.\/index.html','.\/manifest.json'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS))));
+self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match('.\/index.html')))));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));
+  `;
+  const blob=new Blob([swCode],{type:'application/javascript'});
+  const url=URL.createObjectURL(blob);
+  navigator.serviceWorker.register(url).catch(()=>{});
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init(){
+  createStars();
+  loadState();
+  updateMenuUI();
+  // Override ranking screen show
+  const origShow=showScreen;
+  window.showScreen=function(id){
+    origShow(id);
+    if(id==='ranking') renderRanking();
+  };
+}
+init();
+</script>
+</body>
+</html>
